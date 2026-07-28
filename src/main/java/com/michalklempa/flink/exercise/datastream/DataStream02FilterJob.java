@@ -17,4 +17,3 @@ public class DataStream02FilterJob {
         env.execute(DataStream02FilterJob.class.getName());
     }
 }
-;
