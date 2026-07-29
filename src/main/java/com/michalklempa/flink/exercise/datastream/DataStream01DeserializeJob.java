@@ -19,11 +19,7 @@ public class DataStream01DeserializeJob {
          *
          * Resources:
          * - DataStream > Operators > [map](https://nightlies.apache.org/flink/flink-docs-release-1.20/docs/dev/datastream/operators/overview/#map)
-         * -
          */
-
-        //
-        //
 
         //
         // TODO print clickEventStream POJOs

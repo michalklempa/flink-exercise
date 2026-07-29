@@ -5,16 +5,18 @@ import org.apache.flink.api.connector.source.util.ratelimit.RateLimiterStrategy;
 import org.apache.flink.connector.datagen.source.DataGeneratorSource;
 import org.apache.flink.connector.datagen.source.GeneratorFunction;
 
+import java.io.Serializable;
+
 public class JsonSourceFactory {
     public static class DeterministicClickStream {
         String[] pages = {"home", "cart", "checkout", "detail", "registration", "login", "404"};
 
-        public ClickEvent next(long index) {
+        public PageViewEvent next(long index) {
             int pages_index = (int) (index % ((long) pages.length));
             long user_id = index % 100L;
-            long client_time = 1784541600000L + index * 7L;
+            long client_time = 1784541600000L + index * 421L;
 
-            return new ClickEvent(
+            return new PageViewEvent(
                     client_time, pages[pages_index], user_id
             );
         }
