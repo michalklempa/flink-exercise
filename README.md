@@ -34,7 +34,7 @@ mvn clean compile
 mvn clean package
 
 # Run a specific job
-mvn exec:java -Dexec.mainClass="com.michalklempa.DataStream01DeserializeJob"
+mvn exec:java -Dexec.mainClass="com.michalklempa.flink.exercise.datastream.DataStream01DeserializeJob"
 ```
 
 ## Exercises Overview

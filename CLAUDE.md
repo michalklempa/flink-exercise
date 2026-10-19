@@ -21,7 +21,7 @@ This file provides guidance to Claude Code (claude.ai/code) when working with co
 Each job is a standalone Java program with a `main()` method. To run locally:
 
 ```bash
-mvn exec:java -Dexec.mainClass="com.michalklempa.DataStreamXXJob"
+mvn exec:java -Dexec.mainClass="com.michalklempa.flink.exercise.datastream.DataStream01DeserializeJob"
 ```
 
 Or compile to JAR and run with Flink:
@@ -29,24 +29,28 @@ Or compile to JAR and run with Flink:
 ./flink run target/flink-exercise-1.0.0-SNAPSHOT.jar
 ```
 
-**Main class configuration**: Set in `pom.xml` `<transformers><mainClass>` under maven-shade-plugin. Update when changing the entry point.
+**Main class configuration**: Set in `pom.xml` under maven-shade-plugin > transformers > ManifestResourceTransformer > mainClass. Update when changing the entry point (default: `DataStream01DeserializeJob`).
 
 ## Architecture
 
 ### Job Structure
-- Progressive exercises: `DataStream01DeserializeJob` → `DataStream02FilterJob` → `DataStream03Count404Job` → ...
-- Each job has TODO comments marking incomplete sections
+- **Exercise jobs** (incomplete, TODO-driven): `com.michalklempa.flink.exercise.datastream.DataStream01DeserializeJob` → `DataStream02FilterJob` → `DataStream03Count404Job` → `DataStream04PerUserStatsJob` → `DataStream05CountShareOf404PerUserJob`
+- **Solution jobs** (reference implementations): Parallel solutions in `com.michalklempa.flink.solution.datastream.*Solution` packages
+- **Wordcount exercise**: `com.michalklempa.flink.exercise.wordcount.DataStream05WordCountJob` (separate track)
+- Each exercise job has TODO comments marking incomplete sections
 - Standard pattern: `StreamExecutionEnvironment.getExecutionEnvironment()` → source → transformations → execute
 
 ### Data Model
-- **ClickEvent** (`src/main/java/com/michalklempa/ClickEvent.java`): POJO with `page` (String) and `user_id` (Long)
-  - Renders as JSON via Apache Commons ToStringBuilder
-  - Pages: home, cart, checkout, detail, registration, login, 404
+- **PageViewEvent** (`src/main/java/com/michalklempa/flink/exercise/datastream/PageViewEvent.java`): POJO with fields:
+  - `client_time` (long): Event timestamp in milliseconds (e.g., 1784541600000L)
+  - `page` (String): Page type (home, cart, checkout, detail, registration, login, 404)
+  - `user_id` (long): User identifier (0-99)
+  - Renders as JSON via Apache Commons ToStringBuilder: `{"client_time":1784541600000,"page":"home","user_id":42}`
 
-- **JsonSourceFactory**: Creates bounded data generator source
-  - Generates 60 events/second (rate limited)
-  - Returns JSON strings: `{"page":"home","user_id":42}`
-  - Used by all jobs via `env.fromSource(JsonSourceFactory.create(), ...)`
+- **JsonSourceFactory** (exercise & solution variants): Creates bounded data generator source
+  - Generates 60 events/second (rate limited via RateLimiterStrategy)
+  - Returns JSON strings (PageViewEvent serialized)
+  - Used by all jobs via `env.fromSource(JsonSourceFactory.create(), WatermarkStrategy.*, "Json Source")`
 
 ### Time Semantics
 - **Processing Time** (default): No watermarks. Use `WatermarkStrategy.noWatermarks()`
@@ -55,13 +59,19 @@ Or compile to JAR and run with Flink:
 
 ### Configuration
 - **Parallelism**: Set to 1 in all jobs (`env.setParallelism(1)`)
-- **Watermarks**: Configured per-source via second argument to `env.fromSource()`
-- **Dependencies**: Flink streaming, clients, connector-base, connector-datagen (only datagen is runtime; others are provided scope)
-- **Logging**: Log4j 2.24.3 via log4j-slf4j-impl (configured in `src/main/resources/log4j2.properties`)
+- **Watermarks**: Configured per-source via second argument to `env.fromSource()`. Use `WatermarkStrategy.noWatermarks()` for processing time, explicit strategy for event time.
+- **Dependencies**: 
+  - Flink: streaming-java, clients, connector-base (provided scope, embedded in distribution)
+  - flink-connector-datagen (runtime scope for built JAR)
+  - Log4j 2.24.3 via log4j-slf4j-impl (runtime scope)
+  - Jackson (Flink-shaded): Use `org.apache.flink.shaded.jackson2.com.fasterxml.jackson.databind.ObjectMapper` for JSON deserialization
+- **Logging**: Configured in `src/main/resources/log4j2.properties`
 
 ## Key Implementation Details
 
-- Jobs use fluent API: chain operations (filter, map, print, etc.) on DataStream
-- No test files yet—exercises are self-contained jobs
-- JSON deserialization typically uses Flink's built-in ObjectMapper or custom parsing
-- Window operations (tumbling, sliding) require time assignment and watermarks
+- **API Style**: Fluent DataStream API—chain operations (map, filter, print, aggregate, windowAll, etc.)
+- **JSON Deserialization**: Use Flink-shaded Jackson `ObjectMapper.readValue(jsonString, PageViewEvent.class)`. Can be inlined in .map() or wrapped in RichMapFunction for serialization control.
+- **Window Operations**: Require proper time semantics (processing vs event time) and watermarks. Event time windows must extract timestamp via WatermarkStrategy.
+- **Execution**: All jobs call `env.execute(jobName)` to submit to local/distributed Flink runtime
+- **No Tests**: Exercises are self-contained jobs; verification is via log output and print() operators
+- **Solution Reference**: Solution packages provide complete implementations for comparison
