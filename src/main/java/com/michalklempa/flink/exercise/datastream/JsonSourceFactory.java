@@ -29,7 +29,7 @@ public class JsonSourceFactory {
         return new DataGeneratorSource<>(
                 generator,
                 Long.MAX_VALUE,
-                RateLimiterStrategy.perSecond(60),
+                RateLimiterStrategy.perSecond(100),
                 TypeInformation.of(String.class));
     }
 }

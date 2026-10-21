@@ -28,7 +28,7 @@ public class DataStream01DeserializeSolution {
                  * module registrations and type resolution setup from scratch.
                  * More importantly, it caches resolved JavaType and JsonDeserializer instances internally,
                  * so a fresh instance throws the cache away and re-introspects PageViewEvent via reflection
-                 * on every call. At 60 events/second this is wasteful, and on a real high-throughput stream
+                 * on every call. At 100 events/second this is wasteful, and on a real high-throughput stream
                  * it causes high CPU usage, heavy allocation and garbage collection pressure, and latency spikes.
                  * ObjectMapper is thread-safe once configured, so it should be created once and reused,
                  * either as a serialized field or, preferably, in RichMapFunction.open().

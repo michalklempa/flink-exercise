@@ -48,7 +48,7 @@ Or compile to JAR and run with Flink:
   - Renders as JSON via Apache Commons ToStringBuilder: `{"client_time":1784541600000,"page":"home","user_id":42}`
 
 - **JsonSourceFactory** (exercise & solution variants): Creates bounded data generator source
-  - Generates 60 events/second (rate limited via RateLimiterStrategy)
+  - Generates 100 events/second (rate limited via RateLimiterStrategy)
   - Returns JSON strings (PageViewEvent serialized)
   - Used by all jobs via `env.fromSource(JsonSourceFactory.create(), WatermarkStrategy.*, "Json Source")`
 

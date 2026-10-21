@@ -1,7 +1,6 @@
 package com.michalklempa.flink.solution.datastream;
 
 import com.michalklempa.flink.exercise.datastream.PageViewEvent;
-import com.michalklempa.flink.exercise.datastream.JsonSourceFactory;
 import org.apache.flink.api.common.eventtime.SerializableTimestampAssigner;
 import org.apache.flink.api.common.eventtime.WatermarkStrategy;
 import org.apache.flink.api.common.functions.AggregateFunction;

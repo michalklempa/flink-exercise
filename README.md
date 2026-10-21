@@ -34,8 +34,15 @@ mvn clean compile
 mvn clean package
 
 # Run a specific job
-mvn exec:java -Dexec.mainClass="com.michalklempa.flink.exercise.datastream.DataStream01DeserializeJob"
+mvn compile exec:java -Dexec.mainClass="com.michalklempa.flink.exercise.datastream.DataStream01DeserializeJob"
+
+# Run a reference solution
+mvn compile exec:java -Dexec.mainClass="com.michalklempa.flink.solution.datastream.DataStream01DeserializeSolution"
 ```
+
+Flink dependencies have `provided` scope, so they are not part of the fat JAR. The `exec-maven-plugin` in `pom.xml`
+is configured with `classpathScope` `test`, which puts the `provided` dependencies on the classpath when running via Maven.
+Stop a running job with `Ctrl+C`.
 
 ## Exercises Overview
 
