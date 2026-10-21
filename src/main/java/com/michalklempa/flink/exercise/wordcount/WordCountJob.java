@@ -4,7 +4,7 @@ import org.apache.flink.api.common.eventtime.WatermarkStrategy;
 import org.apache.flink.streaming.api.datastream.DataStream;
 import org.apache.flink.streaming.api.environment.StreamExecutionEnvironment;
 
-public class DataStream05WordCountJob {
+public class WordCountJob {
 
     public static void main(String[] args) throws Exception {
         final StreamExecutionEnvironment env = StreamExecutionEnvironment.getExecutionEnvironment();
@@ -14,6 +14,6 @@ public class DataStream05WordCountJob {
 
         // TODO Split sentences into words, count word occurrences, and print running counts
 
-        env.execute(DataStream05WordCountJob.class.getName());
+        env.execute(WordCountJob.class.getName());
     }
 }

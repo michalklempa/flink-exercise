@@ -36,7 +36,7 @@ Or compile to JAR and run with Flink:
 ### Job Structure
 - **Exercise jobs** (incomplete, TODO-driven): `com.michalklempa.flink.exercise.datastream.DataStream01DeserializeJob` → `DataStream02FilterJob` → `DataStream03Count404Job` → `DataStream04PerUserStatsJob` → `DataStream05CountShareOf404PerUserJob`
 - **Solution jobs** (reference implementations): Parallel solutions in `com.michalklempa.flink.solution.datastream.*Solution` packages
-- **Wordcount exercise**: `com.michalklempa.flink.exercise.wordcount.DataStream05WordCountJob` (separate track)
+- **Wordcount exercise**: `com.michalklempa.flink.exercise.wordcount.WordCountJob` (separate track)
 - Each exercise job has TODO comments marking incomplete sections
 - Standard pattern: `StreamExecutionEnvironment.getExecutionEnvironment()` → source → transformations → execute
 
